@@ -1,52 +1,38 @@
 const { GraphQLServer } = require('graphql-yoga');
+const { prisma } = require('./generated/prisma-client');
 
-let links = [{
-  id: 'link-0',
-  url: 'www.howtographql.com',
-  description: 'Fullstack tutorial for GraphQL'
-}];
+const links = [];
 
 const resolvers = {
   Query: {
     info: () => 'This is the API of a Hackernews Clone',
-    feed: () => links,
-    link: (parent, args) => links.find(l => l.id === args.id)
+    feed: (root, args, context, info) => context.prisma.links(),
+    link: (parent, args, context) => {
+      return context.prisma.link({id: args.id});
+    }
   },
   Mutation: {
-    postLink: (parent, args) => {
-      const link = {
-        id: `link-${links.length}`,
+    postLink: (root, args, context) => {
+      return context.prisma.createLink({
+        url: args.url,
         description: args.description,
-        url: args.url
-      };
-
-      links.push(link);
-      return link;
+      });
     },
-    updateLink: (parent, args) => {
-      const link = links.find(l => l.id === args.id);
-      if (!link) {
-        return undefined;
-      }
-
-      if (args.description) {
-        link.description = args.description;
-      }
-
-      if (args.url) {
-        link.url = args.url;
-      }
-
-      return link;
+    updateLink: (parent, args, context) => {
+      return context.prisma.updateLink({
+        data: {
+          url: args.url,
+          description: args.description,
+        },
+        where: {
+          id: args.id
+        }
+      });
     },
-    deleteLink: (parent, args) => {
-      const link = links.find(l => l.id === args.id);
-      if (!link) {
-        return undefined;
-      }
-
-      links = links.filter(l => l.id !== args.id);
-      return link;
+    deleteLink: (parent, args, context) => {
+      return context.prisma.deleteLink({
+        id: args.id
+      });
     }
   },
   Link: {
@@ -58,7 +44,8 @@ const resolvers = {
 
 const server = new GraphQLServer({
   typeDefs: './src/schema.graphql',
-  resolvers
+  resolvers,
+  context: { prisma }
 });
 
 server.start(() => console.log('Server is running on http://localhost:4000'));
