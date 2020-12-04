@@ -1,0 +1,35 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Post {
+  id: Int!
+  title: String!
+  votes: Int!
+}
+
+type Author {
+  id: Int!
+
+  """Author first name"""
+  firstName: String
+  lastName: String
+  posts: [Post]
+}
+
+type Query {
+  authors: [Author!]!
+  author(firstName: String, id: Int!): Author!
+  author2(offset: Int = 0, limit: Int = 10, id: Int!, firstName: String): Author!
+  posts: [Post]
+}
+
+type Mutation {
+  upvotePost(postId: Int!): Post!
+  upvotePost2(upvotePostData: UpvotePostInput!): Post!
+}
+
+input UpvotePostInput {
+  postId: Float!
+  authorId: Float!
+}
