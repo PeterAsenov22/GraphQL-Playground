@@ -3,6 +3,7 @@ import { Args, Int, Mutation, Resolver, Query } from "@nestjs/graphql";
 import { Post } from "./models/post.model";
 import { PostsService } from "src/posts/posts.service";
 import { UpvotePostInput } from "./dto/upvote-post.input";
+import { CreatePostInput } from "./dto/create-post.input";
 
 @Resolver(of => Post)
 export class PostsResolver {
@@ -13,6 +14,11 @@ export class PostsResolver {
     @Query(returns => [Post], { nullable: 'itemsAndList'})
     async posts(): Promise<Post[]> {
         return this.postsService.findAll();
+    }
+
+    @Mutation(returns => Post)
+    async createPost(@Args('createPostData') createPostData: CreatePostInput) {
+        return this.postsService.create(createPostData);
     }
 
     @Mutation(returns => Post)

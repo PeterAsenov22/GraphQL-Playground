@@ -1,38 +1,34 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/sequelize';
+
 import { Author } from './models/author.model';
+import { CreateAuthorInput } from './dto/create-author.input';
 
 @Injectable()
 export class AuthorsService {
     constructor(
-        @Inject('AUTHORS_REPOSITORY') private authorsRepository: typeof Author) {}
-
-    // private readonly authors: Author[];
-    // constructor() {
-    //     this.authors = [
-    //         {
-    //             id: 1,
-    //             firstName: 'Petar',
-    //             lastName: 'Asenov'
-    //         },
-    //         {
-    //             id: 2,
-    //             firstName: 'Ivan',
-    //             lastName: 'Asenov'
-    //         }
-    //     ]
-    // }
+        @Inject('AUTHORS_REPOSITORY')
+        private authorsRepository: typeof Author,
+    ) { }
 
     findAll(): Promise<Author[]> {
-        // return this.authors;
-        return this.authorsRepository.findAll<Author>();
+        return this.authorsRepository.findAll();
     }
 
-    findOneById(id: number): Author {
-        return null;
-        // return {
-        //     id: id,
-        //     firstName: 'Petar',
-        //     lastName: 'Asenov'
-        // }
+    findOneById(id: number): Promise<Author> {
+        return this.authorsRepository.findOne({
+            where: {
+                id,
+            }
+        })
+    }
+
+    async remove(id: number): Promise<void> {
+        const author = await this.findOneById(id);
+        await author.destroy();
+    }
+
+    create(createAuthorData: CreateAuthorInput): Promise<Author> {
+        return this.authorsRepository.create(createAuthorData);
     }
 }

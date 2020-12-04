@@ -1,5 +1,5 @@
-import { Field, Int, ObjectType} from '@nestjs/graphql';
-import { Table, Model, PrimaryKey, Column, HasMany} from 'sequelize-typescript';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Table, Model, Column, HasMany } from 'sequelize-typescript';
 
 import { Post } from '../../posts/models/post.model';
 
@@ -7,8 +7,7 @@ import { Post } from '../../posts/models/post.model';
 @Table
 export class Author extends Model<Author> {
     @Field((type) => Int)
-    @PrimaryKey
-    @Column
+    @Column({ primaryKey: true, autoIncrement: true })
     id: number;
 
     @Field({ nullable: true, description: 'Author first name' })

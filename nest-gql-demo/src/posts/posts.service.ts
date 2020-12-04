@@ -1,32 +1,42 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/sequelize';
+
+import { CreatePostInput } from './dto/create-post.input';
 import { Post } from './models/post.model';
 
 @Injectable()
 export class PostsService {
-    // private posts: Post[];
-// 
-    // constructor() {
-    //     this.posts = [{
-    //         id: 1,
-    //         title: 'My post',
-    //         votes: 2
-    //     }];
-    // }
+    constructor(
+        @Inject('POSTS_REPOSITORY') private postsRepository: typeof Post
+    ) { }
 
-    findAll(): Post[] {
-        // return this.posts;
-        return [];
+    findAll(): Promise<Post[]> {
+        return this.postsRepository.findAll();
     }
 
-    findByAuthorId({ authorId: number }): Post[] {
-        // return this.posts;
-        return [];
+    findById(id: number): Promise<Post> {
+        return this.postsRepository.findOne({
+            where: {
+                id
+            }
+        });
     }
 
-    upvoteById(postId: number): Post {
-        // const post = this.posts.find(p => p.id == postId);
-        // post.votes++;
-        // return post;
-        return null;
+    findByAuthorId(authorId: number): Promise<Post[]> {
+        return this.postsRepository.findAll({
+            where: {
+                authorId
+            }
+        });
+    }
+
+    create(createPostData: CreatePostInput): Promise<Post> {
+        return this.postsRepository.create(createPostData);
+    }
+
+    async upvoteById(postId: number): Promise<Post> {
+        const post = await this.findById(postId);
+        post.votes++;
+        return post;
     }
 }

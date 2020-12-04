@@ -5,6 +5,7 @@ import { Post } from "../posts/models/post.model";
 import { GetAuthorArgs } from "./dto/get-author.args";
 import { AuthorsService } from "./authors.service";
 import { PostsService } from "src/posts/posts.service";
+import { CreateAuthorInput } from "./dto/create-author.input";
 
 @Resolver(of => Author)
 export class AuthorsResolver {
@@ -33,7 +34,13 @@ export class AuthorsResolver {
     @ResolveField('posts', returns => [Post], {nullable: 'itemsAndList'})
     async getPosts(@Parent() author: Author) {
         const { id } = author;
-        if (id > 10) return null;
-        return this.postsService.findByAuthorId({ authorId: id });
+        return this.postsService.findByAuthorId(id);
+    }
+
+    @Mutation(returns => Author)
+    createAuthor(
+        @Args('createAuthorData') createAuthorData: CreateAuthorInput,
+    ): Promise<Author> {
+        return this.authorsService.create(createAuthorData);
     }
 }

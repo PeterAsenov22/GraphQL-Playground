@@ -7,7 +7,7 @@ import { Author } from 'src/authors/models/author.model';
 export class Post extends Model<Post> {
     @Field((type) => Int)
     @PrimaryKey
-    @Column
+    @Column({ primaryKey: true, autoIncrement: true })
     id: number;
 
     @Field()
@@ -15,7 +15,7 @@ export class Post extends Model<Post> {
     title: string;
 
     @Field(type => Int, { defaultValue: 0 })
-    @Column
+    @Column({ defaultValue: 0 })
     votes?: number;
 
     @ForeignKey(() => Author)

@@ -12,7 +12,7 @@ export const databaseProviders = [
         port: 5432,
         username: 'postgres',
         password: 'admin123',
-        database: 'nest',
+        database: 'forum',
       });
       sequelize.addModels([Author, Post]);
       await sequelize.sync({alter: true});
