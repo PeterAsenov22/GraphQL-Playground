@@ -1,4 +1,5 @@
-import { Args, Int, Mutation, Parent, Query, ResolveField, Resolver } from "@nestjs/graphql";
+import { Args, Int, Mutation, Parent, Query, ResolveField, Resolver, Subscription } from "@nestjs/graphql";
+import { PubSub } from 'graphql-subscriptions';
 
 import { Author } from "./models/author.model";
 import { Post } from "../posts/models/post.model";
@@ -6,6 +7,8 @@ import { GetAuthorArgs } from "./dto/get-author.args";
 import { AuthorsService } from "./authors.service";
 import { PostsService } from "src/posts/posts.service";
 import { CreateAuthorInput } from "./dto/create-author.input";
+
+const pubSub = new PubSub();
 
 @Resolver(of => Author)
 export class AuthorsResolver {
@@ -38,9 +41,16 @@ export class AuthorsResolver {
     }
 
     @Mutation(returns => Author)
-    createAuthor(
+    async createAuthor(
         @Args('createAuthorData') createAuthorData: CreateAuthorInput,
     ): Promise<Author> {
-        return this.authorsService.create(createAuthorData);
+        const author = await this.authorsService.create(createAuthorData);
+        pubSub.publish('authorCreated', { authorCreated: author });
+        return author;
+    }
+
+    @Subscription(returns => Author)
+    authorCreated() {
+        return pubSub.asyncIterator('authorCreated');
     }
 }

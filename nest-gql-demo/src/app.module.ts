@@ -27,6 +27,7 @@ import { Post } from './posts/models/post.model';
     // }),
     GraphQLModule.forRoot({
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+      installSubscriptionHandlers: true
       // sortSchema: true,
     })
   ],
