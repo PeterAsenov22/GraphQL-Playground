@@ -3,13 +3,15 @@ import { IsOptional, MinLength } from 'class-validator';
 
 @InputType()
 export class CreateAuthorInput {
-    @Field({nullable: true})
-    @IsOptional()
+    // { nullable: true }
+    @Field()
+    // @IsOptional()
     @MinLength(2)
-    firstName?: string;
+    firstName: string;
 
-    @Field({nullable: true})
-    @IsOptional()
+    // { nullable: true }
+    @Field()
+    // @IsOptional()
     @MinLength(2)
-    lastName?: string;
+    lastName: string;
 }

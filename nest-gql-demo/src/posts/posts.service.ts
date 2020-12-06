@@ -36,7 +36,10 @@ export class PostsService {
 
     async upvoteById(postId: number): Promise<Post> {
         const post = await this.findById(postId);
+        
         post.votes++;
+        await post.save();
+
         return post;
     }
 }

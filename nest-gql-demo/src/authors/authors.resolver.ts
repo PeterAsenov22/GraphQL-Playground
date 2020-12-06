@@ -8,6 +8,7 @@ import { GetAuthorArgs } from "./dto/get-author.args";
 import { AuthorsService } from "./authors.service";
 import { PostsService } from "src/posts/posts.service";
 import { CreateAuthorInput } from "./dto/create-author.input";
+import { UpdateAuthorInput } from "./dto/edit-author.input";
 
 const pubSub = new PubSub();
 
@@ -52,6 +53,15 @@ export class AuthorsResolver {
     ): Promise<Author> {
         const author = await this.authorsService.create(createAuthorData);
         pubSub.publish('authorCreated', { authorCreated: author });
+        return author;
+    }
+
+    @Mutation(returns => Author)
+    async updateAuthor(
+        @Args('updateAuthorData') updateAuthorData: UpdateAuthorInput,
+    ): Promise<Author> {
+        const author = await this.authorsService.update(updateAuthorData);
+        // pubSub.publish('authorUpdated', { authorUpdated: author });
         return author;
     }
 

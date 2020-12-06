@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/sequelize';
 
 import { Author } from './models/author.model';
 import { CreateAuthorInput } from './dto/create-author.input';
+import { UpdateAuthorInput } from './dto/edit-author.input';
 
 @Injectable()
 export class AuthorsService {
@@ -30,5 +31,15 @@ export class AuthorsService {
 
     create(createAuthorData: CreateAuthorInput): Promise<Author> {
         return this.authorsRepository.create(createAuthorData);
+    }
+
+    async update(updateAuthorData: UpdateAuthorInput): Promise<Author> {
+        const author = await this.findOneById(updateAuthorData.id);
+        if (updateAuthorData.lastName) {
+            author.lastName = updateAuthorData.lastName;
+            await author.save();
+        }
+
+        return author;
     }
 }

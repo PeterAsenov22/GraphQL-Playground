@@ -26,14 +26,20 @@ type Query {
 
 type Mutation {
   createAuthor(createAuthorData: CreateAuthorInput!): Author!
+  updateAuthor(updateAuthorData: UpdateAuthorInput!): Author!
   createPost(createPostData: CreatePostInput!): Post!
   upvotePost(postId: Int!): Post!
   upvotePost2(upvotePostData: UpvotePostInput!): Post!
 }
 
 input CreateAuthorInput {
-  firstName: String
+  firstName: String!
+  lastName: String!
+}
+
+input UpdateAuthorInput {
   lastName: String
+  id: Float!
 }
 
 input CreatePostInput {
