@@ -1,4 +1,5 @@
 import { Args, Int, Mutation, Parent, Query, ResolveField, Resolver, Subscription } from "@nestjs/graphql";
+import { NotFoundException } from "@nestjs/common";
 import { PubSub } from 'graphql-subscriptions';
 
 import { Author } from "./models/author.model";
@@ -26,7 +27,12 @@ export class AuthorsResolver {
     async getAuthor(
         @Args('id', { type: () => Int }) id: number,
         @Args('firstName', { nullable: true }) firstName?: string,) {
-        return this.authorsService.findOneById(id);
+        const author = await this.authorsService.findOneById(id);
+        if (!author) {
+            throw new NotFoundException(`Author with id "${id}" does not exist.`);
+        }
+
+        return author;
     }
 
     @Query(returns => Author, { name: 'author2' })
