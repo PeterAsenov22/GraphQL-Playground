@@ -1,5 +1,6 @@
 import { InputType, Field } from '@nestjs/graphql';
 import { IsOptional, MinLength } from 'class-validator';
+import { AuthorMetaInput } from './author-meta.input';
 
 @InputType()
 export class CreateAuthorInput {
@@ -14,4 +15,7 @@ export class CreateAuthorInput {
     // @IsOptional()
     @MinLength(2)
     lastName: string;
+    
+    @Field()
+    meta: AuthorMetaInput
 }

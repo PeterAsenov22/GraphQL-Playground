@@ -2,6 +2,11 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type AuthorMeta {
+  companyName: String
+  bulstat: String
+}
+
 type Post {
   id: Int!
   title: String!
@@ -14,6 +19,7 @@ type Author {
   """Author first name"""
   firstName: String
   lastName: String
+  meta: AuthorMeta
   posts: [Post]
 }
 
@@ -35,10 +41,17 @@ type Mutation {
 input CreateAuthorInput {
   firstName: String!
   lastName: String!
+  meta: AuthorMetaInput!
+}
+
+input AuthorMetaInput {
+  companyName: String
+  bulstat: String
 }
 
 input UpdateAuthorInput {
   lastName: String
+  meta: AuthorMetaInput
   id: Float!
 }
 
