@@ -26,12 +26,14 @@ export class FieldEncryptionUtil {
 
     static encryptMeta(fieldName: string): (meta: any) => void {
         return function (meta: any) {
-            const metaWithHashes = {};
-            Object.getOwnPropertyNames(meta).forEach((propertyName: string) => {
+            const metaWithHashes = Object.getOwnPropertyNames(meta).reduce((acc, propertyName) => {
                 const propertyValue = meta[propertyName];
-                metaWithHashes[propertyName] = FieldEncryptionUtil.encryptString(propertyValue);
-                metaWithHashes[`${propertyName}Hash`] = Crypto.hmac(propertyValue);
-            });
+                return {
+                    ...acc,
+                    [propertyName]: FieldEncryptionUtil.encryptString(propertyValue),
+                    [`${propertyName}Hash`]: Crypto.hmac(propertyValue)
+                };
+            }, {});
 
             this.setDataValue(fieldName, metaWithHashes);
         };
@@ -39,17 +41,17 @@ export class FieldEncryptionUtil {
 
     static decryptMeta(fieldName: string): () => object {
         return function () {
-            const meta = {};
             const metaWithHashes = this.getDataValue(fieldName);
 
-            Object.getOwnPropertyNames(metaWithHashes).forEach((propertyName: string) => {
+            return Object.getOwnPropertyNames(metaWithHashes).reduce((acc, propertyName) => {
                 const propertyValue = metaWithHashes[propertyName];
-                meta[propertyName] = propertyName.endsWith('Hash')
-                    ? propertyValue
-                    : FieldEncryptionUtil.decryptString(propertyValue);
-            });
-
-            return meta;
+                return {
+                    ...acc,
+                    [propertyName]: propertyName.endsWith('Hash')
+                        ? propertyValue
+                        : FieldEncryptionUtil.decryptString(propertyValue)
+                };
+            }, {});
         };
     }
 }
